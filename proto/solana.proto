@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package solana;
+
+service SolanaService {
+    rpc GetBalance (BalanceRequest) returns (BalanceResponse);
+    rpc CreateWallet (CreateWalletRequest) returns (CreateWalletResponse);
+    rpc RequestAirdrop (AirdropRequest) returns (AirdropResponse);
+    rpc SendSol (SendSolRequest) returns (SendSolResponse);
+    rpc Greet (GreetRequest) returns (GreetResponse);
+}
+
+message BalanceRequest {
+    string network = 1;
+    string wallet_address = 2;
+}
+
+message BalanceResponse {
+    uint64 balance = 1;
+}
+
+message CreateWalletRequest {}
+
+message CreateWalletResponse {
+    string public_key = 1;
+    string secret_key = 2;
+}
+
+message AirdropRequest {
+    string network = 1;
+    string wallet_address = 2;
+    uint64 amount = 3;
+}
+
+message AirdropResponse {
+    string signature = 1;
+}
+
+message SendSolRequest {
+    string from_address = 1;
+    string to_address = 2;
+    uint64 amount = 3;
+    string rpc_url = 4;
+    string from_secret_key = 5;
+}
+
+message SendSolResponse {
+    string signature = 1;
+}
+
+message GreetRequest {
+    string network = 1;
+    string payer_secret_key = 2;
+    string seed = 3;
+}
+
+message GreetResponse {
+    string signature = 1;
+}
