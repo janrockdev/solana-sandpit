@@ -10,6 +10,7 @@ prost = "0.13.1"
 tokio = { version = "1.38.1", features = ["full"] }
 solana-client = "2.0.3"
 solana-sdk = "2.0.3"
+solana-program = "2.0.3"
 crossbeam = "0.8.4"
 
 [build-dependencies]

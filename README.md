@@ -6,7 +6,7 @@ Version: 0.1.0
 
 Release: 19/07/2024
 
-[![Rust](https://github.com/janrockdev/solana-rust-sandpit/actions/workflows/rust.yml/badge.svg)](https://github.com/janrockdev/solana-rust-sandpit/actions/workflows/rust.yml)
+[![Rust](https://github.com/janrockdev/solana-sandpit/actions/workflows/rust.yml/badge.svg)](https://github.com/janrockdev/solana-sandpit/actions/workflows/rust.yml)
 
 ### Description
 Sandpit to integrates all common Solana features under one gRPC service with testing client.
@@ -41,8 +41,6 @@ cargo run --bin client
 <<<<<<< HEAD
 #submit transaction to contract
 cargo run --bin client greet devnet <secret-key> cau
-=======
->>>>>>> eb00d2075d8c378eede1fea239873189108041c2
 ```
 
 ### Resources

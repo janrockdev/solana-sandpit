@@ -3753,6 +3753,7 @@ dependencies = [
  "crossbeam",
  "prost",
  "solana-client",
+ "solana-program",
  "solana-sdk 2.0.3",
  "tokio",
  "tonic",

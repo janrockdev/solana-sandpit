@@ -12,6 +12,7 @@ use solana_sdk::{
     system_instruction::transfer,
     transaction::Transaction,
 };
+use solana_program::instruction::Instruction;
 use std::str::FromStr;
 use tokio::task;
 use tonic::{transport::Server, Request, Response, Status};
@@ -254,7 +255,17 @@ impl SolanaService for MySolanaService {
             let greeted_pubkey = Pubkey::create_with_seed(&payer.pubkey(), &seed, &program_pubkey).unwrap();
             println!("Greeted pubkey: {}", greeted_pubkey);
 
-            //if the account does not exist, create a new account
+            let instruction = Instruction {
+                program_id: program_pubkey,
+                accounts: vec![
+                    solana_program::instruction::AccountMeta::new(greeted_pubkey, false),
+                    solana_program::instruction::AccountMeta::new_readonly(payer.pubkey(), true),
+                ],
+                data: vec![], // No additional data needed for this instruction
+            };
+            println!("Instruction: {:?}", instruction);
+
+            // //if the account does not exist, create a new account
             if greeted_account.iter().find(|x: &&(Pubkey, solana_sdk::account::Account)| x.0 == greeted_pubkey).is_none() {
 
                 let transaction = solana_sdk::transaction::Transaction::new_signed_with_payer(
@@ -263,8 +274,8 @@ impl SolanaService for MySolanaService {
                         &greeted_pubkey,
                         &payer.pubkey(),
                         &seed,
-                        1_000_000,
-                        0, //amount of space to allocate for the new account in bytes
+                        10_000_000,
+                        std::mem::size_of::<GreetingAccount>() as u64,
                         &program_pubkey,
                     )],
                     Some(&payer.pubkey()),
@@ -276,15 +287,27 @@ impl SolanaService for MySolanaService {
 
                 println!("Signature: {}", signature);
                                 
-                let program_pubkey = Pubkey::from_str("D36yRZ6n8AwhhStGRJQvjZL78nx5DP2qR3CtqraQuLJF").unwrap();
-                let greeted_account = client.get_program_accounts(&program_pubkey).unwrap();
+            let program_pubkey = Pubkey::from_str("D36yRZ6n8AwhhStGRJQvjZL78nx5DP2qR3CtqraQuLJF").unwrap();
+            let greeted_account = client.get_program_accounts(&program_pubkey).unwrap();
                 println!("Program accounts: {:?}", greeted_account);
             } else {
                 println!("Account {} already exists. Try different seed.", greeted_pubkey);
             }
 
+            let recent_blockhash = client.get_latest_blockhash().unwrap();
+            let transaction = Transaction::new_signed_with_payer(
+                &[instruction],
+                Some(&payer.pubkey()),
+                &[&payer],
+                recent_blockhash,
+            );
+
+            let signature = client.send_and_confirm_transaction(&transaction).unwrap();
+            println!("Signature: {}", signature);
+
+
             let account_info = client.get_account(&greeted_pubkey).unwrap();
-            println!("{:?}", account_info);
+            println!("Account Info: {:?}", account_info);
             
             let response = GreetResponse { signature: format!("{:?}", account_info) };
 
@@ -296,9 +319,21 @@ impl SolanaService for MySolanaService {
 
 async fn report_greetings(client: &RpcClient, greeted_pubkey: &Pubkey) -> Result<(), Box<dyn std::error::Error>> {
     let account_info = client.get_account(greeted_pubkey)?;
+    println!("Account Info Size: {:?}", account_info.data.len());
+
     if account_info.lamports == 0 {
         return Err("Error: cannot find the greeted account".into());
     }
+
+    if account_info.data.is_empty() {
+        return Err("Error: account data is empty".into());
+    }
+
+    // Ensure that the data length matches the expected length for GreetingAccount
+    if account_info.data.len() != std::mem::size_of::<GreetingAccount>() {
+        return Err("Error: account data length mismatch".into());
+    }
+
     let greeting = GreetingAccount::try_from_slice(&account_info.data)?;
     println!(
         "{} has been greeted {} time(s)",
