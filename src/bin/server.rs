@@ -224,8 +224,7 @@ impl SolanaService for MySolanaService {
             payer_secret_key,
             seed,
         } = request.into_inner();
-        //let (sender, receiver) = channel::unbounded();
-
+        
         //task::spawn_blocking(move || {
             let rpc_url = match network.as_str() {
                 "devnet" => "https://api.devnet.solana.com",

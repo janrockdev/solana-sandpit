@@ -41,6 +41,11 @@ cargo run --bin client
 <<<<<<< HEAD
 #submit transaction to contract
 cargo run --bin client greet devnet <secret-key> cau
+#output
+Account Info: Account { lamports: 10000000, data.len: 4, owner: D36yRZ6n8AwhhStGRJQvjZL78nx5DP2qR3CtqraQuLJF, executable: false, rent_epoch: 18446744073709551615, data: 02000000 }
+Account Info Size: 4
+GG556J3jxeGYnAijkpG9THKDNEnR8R8gSmidkRArjjXT has been greeted 2 time(s)
+Report: Ok(())
 ```
 
 ### Resources
