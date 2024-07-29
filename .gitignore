@@ -1,8 +1,5 @@
 /target
-<<<<<<< HEAD
 /program/target
 contract-keypair.json
 solana-keypair.json
-=======
-/contract/target
->>>>>>> eb00d2075d8c378eede1fea239873189108041c2
+/app/node_modules
